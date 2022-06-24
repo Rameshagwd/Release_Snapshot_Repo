@@ -7,8 +7,8 @@ pipeline {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
         NEXUS_URL = "10.32.39.203:8081"
-        NEXUS_REPOSITORY = "maven-nexus-repo"
-        NEXUS_CREDENTIAL_ID = "Snapshot_repo_nexus"
+        NEXUS_REPOSITORY = "Snapshot_repo_nexus"
+        NEXUS_CREDENTIAL_ID = "Nexus"
     }
     stages {
         stage("Clone code from VCS") {
