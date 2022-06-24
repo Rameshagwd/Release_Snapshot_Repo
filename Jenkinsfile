@@ -27,7 +27,7 @@ pipeline {
         stage ('MVN Package') {
             steps {
                 sh script: 'mvn clean package'
-                archiveArtifacts artifacts: 'target/*.war', onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'target/*.jar', onlyIfSuccessful: true
             }
         }
         stage ('Deploy .Jar/War files to Artifacts if the Snapshot or Release') {
