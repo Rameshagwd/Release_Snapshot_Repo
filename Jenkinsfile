@@ -7,7 +7,7 @@ pipeline {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
         NEXUS_URL = "10.32.39.203:8081"
-        NEXUS_REPOSITORY = "Snapshot_repo_nexus" "release-repo"
+        NEXUS_REPOSITORY = pom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
         NEXUS_CREDENTIAL_ID = "Nexus"
     }
     stages {
