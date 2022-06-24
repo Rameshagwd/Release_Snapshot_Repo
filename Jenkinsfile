@@ -26,7 +26,7 @@ pipeline {
         }
         stage ('MVN Package') {
             steps {
-                sh 'mnv package'
+                sh 'mvn package'
             }
         }
         stage ('Upload JAR to NEXUS') {
