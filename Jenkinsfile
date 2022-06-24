@@ -30,9 +30,10 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar', onlyIfSuccessful: true
             }
         }
-        stage ('Deploy .Jar/War files to Artifacts if the Snapshot or Release') {
+        stage ('Upload JAR to NEXUS') {
             steps {
                 script {
+                    
                     pom = readMavenPom file: 'pom.xml'
                     def nexusRepoName = pom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
                     nexusArtifactUploader artifacts: [
