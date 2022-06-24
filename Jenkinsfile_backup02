@@ -8,12 +8,17 @@ pipeline {
         NEXUS_PROTOCOL = "http"
         NEXUS_URL = "10.32.39.203:8081"
         NEXUS_REPOSITORY = "pom.version.endsWith("SNAPSHOT")" ? "Snapshot_repo_nexus" : "release-repo"
+        System.out.print(NEXUS_REPOSITORY)
         NEXUS_CREDENTIAL_ID = "Nexus"
     }
-    stages {
-        stage("Clone code from VCS") {
-            steps {
-                script {
+    stages 
+    {
+        stage("Clone code from VCS") 
+        {
+            steps 
+            {
+                script 
+                {
                     git branch: 'main', url: 'https://github.com/Rameshagwd/Release_Snapshot_Repo.git'
                 }
             }
