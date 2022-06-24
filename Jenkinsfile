@@ -1,64 +1,58 @@
 pipeline {
     agent any
     tools {
-        maven "Maven3"
-    }
-    environment {
-        NEXUS_VERSION = "nexus3"
-        NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "10.32.39.203:8081"
-        NEXUS_REPOSITORY = "pom.version.endsWith("SNAPSHOT")" ? "Snapshot_repo_nexus" : "release-repo"
-        NEXUS_CREDENTIAL_ID = "Nexus"
+        maven 'Maven3'
     }
     stages {
-        stage("Clone code from VCS") {
+        stage ('Git Clone') {
             steps {
-                script {
-                    git branch: 'main', url: 'https://github.com/Rameshagwd/Release_Snapshot_Repo.git'
-                }
+                git branch: 'main', url: 'https://github.com/Rameshagwd/Release_Snapshot_Repo.git'
+            } 
+        }
+        stage ('MVN Clean') {
+            steps {
+                sh 'mvn clean'
             }
         }
-        stage("Maven Build") {
+        stage ('MVN Compile') {
             steps {
-                script {
-                    sh "mvn package -DskipTests=true"
-                }
+                sh 'mvn compile'
             }
         }
-        stage("Publish to Nexus Repository Manager") {
+        stage ('MVN Test') {
             steps {
-                script {
-                    pom = readMavenPom file: "pom.xml";
-                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
-                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-                    artifactPath = filesByGlob[0].path;
-                    artifactExists = fileExists artifactPath;
-                    if(artifactExists) {
-                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
-                        nexusArtifactUploader(
-                            nexusVersion: NEXUS_VERSION,
-                            protocol: NEXUS_PROTOCOL,
-                            nexusUrl: NEXUS_URL,
-                            groupId: pom.groupId,
-                            version: pom.version,
-                            repository: NEXUS_REPOSITORY,
-                            credentialsId: NEXUS_CREDENTIAL_ID,
-                            artifacts: [
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: artifactPath,
-                                type: pom.packaging],
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: "pom.xml",
-                                type: "pom"]
-                            ]
-                        );
-                    } else {
-                        error "*** File: ${artifactPath}, could not be found";
-                    }
-                }
+                sh 'mvn test'
             }
         }
+        stage ('MVN Package') {
+            steps {
+                sh script: 'mvn clean package'
+                archiveArtifacts artifacts: 'target/*.jar', onlyIfSuccessful: true
+            }
+        }
+        stage ('Upload JAR to NEXUS') {
+            steps {
+                script {
+
+                    pom = readMavenPom file: 'pom.xml'
+                    def NEXUS_REPOSITORY = pom.version.endsWith("SNAPSHOT") ? (repository)"Snapshot_repo_nexus" : (repository)"release-repo"
+                    nexusArtifactUploader artifacts: [
+                        [
+                            artifactId: 'Release_Snapshot_Repo',
+                            classifier: '',
+                            file: "target/Release_Snapshot_Repo-${pom.version}.jar",
+                            type: 'jar'
+                        ]
+                    ],
+
+                    credentialsId: 'Nexus',
+                    nexusVersion: 'nexus3',
+                    nexusUrl: '10.32.39.203:8081',
+                    protocol: 'http',
+                    repository: NEXUS_REPOSITORY,
+                    version: "${pom.version}"
+                }
+            }
+        }   
     }
 }
