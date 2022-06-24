@@ -29,7 +29,7 @@ pipeline {
         stage ('Deploy .Jar/War files to Artifacts if the Snapshot or Release') {
             steps {
                 script {
-                    pom = readMavenPom file: 'pom.xml',
+                    pom = readMavenPom file: 'pom.xml'
                     pom nexusRepoName = mavenPom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
                     nexusArtifactUploader artifacts: [
                         [
