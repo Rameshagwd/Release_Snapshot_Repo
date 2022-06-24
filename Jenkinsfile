@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     pom = readMavenPom file: 'pom.xml',
-                    nexusRepoName = readMavenPom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
+                    pom nexusRepoName = mavenPom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
                     nexusArtifactUploader artifacts: [
                         [
                             artifactId: 'Release_Snapshot_Repo',
