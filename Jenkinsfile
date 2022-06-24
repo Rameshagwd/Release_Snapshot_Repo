@@ -33,9 +33,9 @@ pipeline {
         stage ('Upload JAR to NEXUS') {
             steps {
                 script {
-                    
+
                     pom = readMavenPom file: 'pom.xml'
-                    def nexusRepoName = pom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
+                    def NEXUS_REPOSITORY = pom.version.endsWith("SNAPSHOT") ? "Snapshot_repo_nexus" : "release-repo"
                     nexusArtifactUploader artifacts: [
                         [
                             artifactId: 'Release_Snapshot_Repo',
@@ -49,7 +49,7 @@ pipeline {
                     nexusVersion: 'nexus3',
                     nexusUrl: '10.32.39.203:8081',
                     protocol: 'http',
-                    repository: nexusRepoName,
+                    repository: NEXUS_REPOSITORY,
                     version: "${pom.version}"
                 }
             }
