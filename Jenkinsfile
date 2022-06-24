@@ -36,7 +36,7 @@ pipeline {
                             artifactId: 'Release_Snapshot_Repo',
                             classifier: "",
                             file: "target/Release_Snapshot_Repo-${pom.version}",
-                            type: jar
+                            type: 'jar'
                         ]
                     ],
 
